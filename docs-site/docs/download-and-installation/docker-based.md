@@ -14,26 +14,29 @@ docker pull manuelrueda/clarid-tools:latest
 docker image tag manuelrueda/clarid-tools:latest cnag/clarid-tools:latest
 ```
 
-### Method 2: Building from the repository Dockerfile
+### Method 2: Building from source
 
-Download the `Dockerfile` from [GitHub](https://github.com/CNAG-Biomedical-Informatics/clarid-tools/blob/main/docker/Dockerfile):
+Clone the repository so Docker can build the image from that exact checkout:
 
 ```bash
-wget https://raw.githubusercontent.com/CNAG-Biomedical-Informatics/clarid-tools/main/docker/Dockerfile
+git clone https://github.com/CNAG-Biomedical-Informatics/clarid-tools.git
+cd clarid-tools
 ```
 
-Then build the container:
+To reproduce a release image, check out the desired annotated release tag before building.
+
+Then build the container from the repository root:
 
 - **For Docker version 19.03 and above (supports buildx):**
 
   ```bash
-  docker buildx build -t cnag/clarid-tools:latest .
+  docker buildx build -f docker/Dockerfile -t cnag/clarid-tools:latest .
   ```
 
 - **For Docker versions older than 19.03 (no buildx support):**
 
   ```bash
-  docker build -t cnag/clarid-tools:latest .
+  docker build -f docker/Dockerfile -t cnag/clarid-tools:latest .
   ```
 
 ## Running and Interacting with the Container

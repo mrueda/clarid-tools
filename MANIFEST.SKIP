@@ -29,6 +29,9 @@
 ^README\.md$
 ^README$
 ^\.git/
+^\.gitattributes$
+^\.dockerignore$
+^\.gitignore$
 ^\.github/
 (^|/)bck/
 ^docs/
@@ -42,6 +45,7 @@
 ^git_history\.txt$
 ^git_add$
 ^TO_DO\.md$
+^TODO\.md$
 ^do_test\.sh$
 ^do_readme\.sh$
 ^README_text.md$

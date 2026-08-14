@@ -1,0 +1,48 @@
+# Repository and automation metadata
+.git
+.github
+.gitattributes
+.gitignore
+.codex
+.agents
+AGENTS.md
+SESSION*.md
+
+# Documentation and developer-only directories
+/README*
+/docs
+/docs-site
+/nb
+/non-containerized
+/docker
+/bck
+**/bck
+
+# Local build, test, and profiling artifacts
+/Makefile
+/MANIFEST
+/MANIFEST.bak
+/META*
+/MYMETA*
+/pm_to_blib
+/blib
+/cover_db
+/nytprof*
+/NOTES*
+/TODO.md
+/git_add
+/git_history.txt
+/ClarID-Tools-*.tar
+/ClarID-Tools-*.tar.gz
+node_modules
+.pytest_cache
+__pycache__
+*.pyc
+*.pyo
+*.swp
+*.tmp
+*.log
+
+# Local credentials
+.env
+.env.*

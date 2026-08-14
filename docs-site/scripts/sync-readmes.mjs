@@ -1,4 +1,4 @@
-import {mkdir, readFile, writeFile} from 'node:fs/promises';
+import {copyFile, mkdir, readFile, readdir, rm, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 
@@ -48,4 +48,24 @@ await Promise.all(
   }),
 );
 
-console.log(`Synced ${pages.length} README-backed Docusaurus pages.`);
+const schemaSourceRoot = path.join(repoRoot, 'share', 'versions');
+const schemaTargetRoot = path.join(docsSiteRoot, 'static', 'schemas');
+const schemaName = 'clarid-codebook-schema.json';
+const versionDirectories = (await readdir(schemaSourceRoot, {withFileTypes: true}))
+  .filter((entry) => entry.isDirectory() && /^\d+\.\d+$/.test(entry.name))
+  .map((entry) => entry.name)
+  .sort((left, right) => left.localeCompare(right, undefined, {numeric: true}));
+
+await rm(schemaTargetRoot, {recursive: true, force: true});
+await Promise.all(
+  versionDirectories.map(async (version) => {
+    const source = path.join(schemaSourceRoot, version, schemaName);
+    const target = path.join(schemaTargetRoot, version, schemaName);
+    await mkdir(path.dirname(target), {recursive: true});
+    await copyFile(source, target);
+  }),
+);
+
+console.log(
+  `Synced ${pages.length} README-backed pages and ${versionDirectories.length} versioned schemas.`,
+);

@@ -9,7 +9,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/CNAG-Biomedical-Informatics/clarid-tools/badge.svg?branch=main)](https://coveralls.io/github/CNAG-Biomedical-Informatics/clarid-tools?branch=main)
 [![CPAN Publish](https://github.com/cnag-biomedical-informatics/clarid-tools/actions/workflows/cpan-publish.yml/badge.svg)](https://github.com/cnag-biomedical-informatics/clarid-tools/actions/workflows/cpan-publish.yml)
 [![Kwalitee Score](https://cpants.cpanauthors.org/dist/ClarID-Tools.svg)](https://cpants.cpanauthors.org/dist/ClarID-Tools)
-![version](https://img.shields.io/badge/version-0.03-28a745)
+![version](https://img.shields.io/badge/version-0.04-28a745)
 [![Docker Build](https://github.com/cnag-biomedical-informatics/clarid-tools/actions/workflows/docker-build-multi-arch.yml/badge.svg)](https://github.com/cnag-biomedical-informatics/clarid-tools/actions/workflows/docker-build-multi-arch.yml)
 [![Docker Pulls](https://badgen.net/docker/pulls/manuelrueda/clarid-tools?icon=docker&label=pulls)](https://hub.docker.com/r/manuelrueda/clarid-tools/)
 [![Docker Image Size](https://badgen.net/docker/size/manuelrueda/clarid-tools?icon=docker&label=image%20size)](https://hub.docker.com/r/manuelrueda/clarid-tools/)

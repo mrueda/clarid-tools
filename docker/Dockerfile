@@ -1,7 +1,15 @@
 FROM ubuntu:22.04
 
-# File Author / Maintainer
-LABEL org.opencontainers.image.authors="Manuel Rueda <manuel.rueda@cnag.eu>"
+ARG BUILD_VERSION=development
+ARG VCS_REF=unknown
+
+LABEL org.opencontainers.image.authors="Manuel Rueda <manuel.rueda@cnag.eu>" \
+      org.opencontainers.image.title="ClarID-Tools" \
+      org.opencontainers.image.description="Toolkit for generating and validating ClarID identifiers" \
+      org.opencontainers.image.source="https://github.com/CNAG-Biomedical-Informatics/clarid-tools" \
+      org.opencontainers.image.version="${BUILD_VERSION}" \
+      org.opencontainers.image.revision="${VCS_REF}" \
+      org.opencontainers.image.licenses="Artistic-2.0"
 
 # Prevent interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
@@ -9,25 +17,30 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV PATH="/usr/local/sbin:/usr/sbin:/sbin:${PATH}"
 
 # Install Linux tools
-RUN apt-get update && \
-    apt-get -y install gcc make git cpanminus perl-doc vim sudo libperl-dev qrencode zbar-tools python3 python3-pip
+RUN apt-get update \
+    && apt-get -y install --no-install-recommends \
+       gcc make cpanminus perl-doc vim sudo libperl-dev qrencode zbar-tools \
+       python3 python3-venv \
+    && rm -rf /var/lib/apt/lists/*
 
-# Download Convert-Pheno
-WORKDIR /usr/share/
-RUN git clone https://github.com/CNAG-Biomedical-Informatics/clarid-tools.git
-
-# Remove Git metadata and CI configs to shrink image and avoid shipping them
-RUN rm -rf clarid-tools/.git clarid-tools/.github clarid-tools/.gitattributes clarid-tools/.gitignore
-
-# Remove documentation sources from the runtime image
-RUN rm -rf clarid-tools/docs/ clarid-tools/docs-site/ clarid-tools/mkdocs.yml
-
-# Install Perl modules
 WORKDIR /usr/share/clarid-tools
+
+# Build from the caller-supplied checkout so release tags are reproducible.
+COPY . .
+ENV PATH="/opt/clarid-venv/bin:/usr/share/clarid-tools/bin:${PATH}"
+
 RUN cpanm --notest --installdeps .
 
 # Install Python modules (utils)
-RUN pip3 install --no-cache-dir -r utils/csv/requirements.txt
+RUN python3 -m venv /opt/clarid-venv \
+    && pip install --no-cache-dir -r utils/csv/requirements.txt
+
+# Exercise the exact source tree that will remain in the runtime image.
+RUN prove -l t \
+    && python3 -m unittest discover -s utils/csv -p 'test_*.py' \
+    && if [ "$BUILD_VERSION" != "development" ]; then \
+         test "$(perl bin/clarid-tools --version)" = "clarid-tools version $BUILD_VERSION"; \
+       fi
 
 # Add user "dockeruser"
 ARG UID=1000

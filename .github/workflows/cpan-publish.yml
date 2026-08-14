@@ -1,30 +1,100 @@
 name: Publish to CPAN
 
 on:
-  workflow_dispatch
-  #release:
-  #  types: [created]
+  push:
+    tags:
+      - "*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing annotated release tag to publish, for example 0.04"
+        required: true
+        type: string
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
+
+concurrency:
+  group: cpan-${{ inputs.tag || github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
 
 jobs:
   build-and-release:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     name: Build and release ClarID::Tools to CPAN
     steps:
-      - uses: actions/checkout@v2
-      - name: Install cpanminus
-        run: curl -L https://cpanmin.us | perl - --sudo App::cpanminus
-      - name: Install dependencies
-        run: cpanm --sudo File::ShareDir::Install
-      - name: Configure
-        run: perl Makefile.PL
-      - name: Create MANIFEST
-        run: make manifest
-      - name: Build
-        run: make
-      - name: Deliver locally
-        run: make dist
+      - name: Check out release
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ env.RELEASE_TAG }}
+          fetch-depth: 0
+
+      - name: Set up Perl
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: "5.42"
+
+      - name: Verify release metadata
+        id: release_metadata
+        shell: bash
+        run: bash .github/scripts/verify-release.sh "$RELEASE_TAG"
+
+      - name: Install system test dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qrencode zbar-tools
+
+      - name: Install Perl dependencies
+        run: cpanm -n --installdeps .
+
+      - name: Build and test source distribution
+        run: |
+          perl Makefile.PL
+          make manifest
+          make test
+          make dist
+
+      - name: Test unpacked distribution
+        shell: bash
+        env:
+          VERSION: ${{ steps.release_metadata.outputs.version }}
+        run: |
+          archive="ClarID-Tools-$VERSION.tar.gz"
+          test -s "$archive"
+          mkdir -p "$RUNNER_TEMP/clarid-dist"
+          tar -xzf "$archive" -C "$RUNNER_TEMP/clarid-dist"
+          cd "$RUNNER_TEMP/clarid-dist/ClarID-Tools-$VERSION"
+          perl Makefile.PL
+          make test
+
+      - name: Test installed distribution and bundled codebook
+        shell: bash
+        env:
+          VERSION: ${{ steps.release_metadata.outputs.version }}
+        run: |
+          install_root="$RUNNER_TEMP/clarid-install"
+          cpanm -n --notest --local-lib "$install_root" "./ClarID-Tools-$VERSION.tar.gz"
+          export PERL5LIB="$install_root/lib/perl5${PERL5LIB:+:$PERL5LIB}"
+          export PATH="$install_root/bin:$PATH"
+          cd "$RUNNER_TEMP"
+          test "$(clarid-tools --version)" = "clarid-tools version $VERSION"
+          identifier=$(clarid-tools code \
+            --entity subject --format human --action encode \
+            --study TestCohort --type Case --sex Male --age_group Age20to29 \
+            --subject_id 7 --condition I25.110)
+          test "$identifier" = "TestCohort-00007-Case-I25.110-Male-A20_29"
+
+      - name: Retain CPAN distribution
+        uses: actions/upload-artifact@v4
+        with:
+          name: ClarID-Tools-${{ steps.release_metadata.outputs.version }}
+          path: ClarID-Tools-${{ steps.release_metadata.outputs.version }}.tar.gz
+
       - name: Upload to CPAN
-        id: upload
         uses: thibaultduponchelle/action-upload-to-cpan@master
         with:
           username: ${{ secrets.CPAN_USER }}
