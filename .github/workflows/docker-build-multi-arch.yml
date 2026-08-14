@@ -37,6 +37,13 @@ jobs:
         shell: bash
         run: bash .github/scripts/verify-release.sh "$RELEASE_TAG"
 
+      - name: Allow slower CPAN configuration under emulation
+        shell: bash
+        run: |
+          if ! grep -q -- "--configure-timeout" docker/Dockerfile; then
+            sed -i "s/cpanm --notest/cpanm --configure-timeout 300 --notest/" docker/Dockerfile
+          fi
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         with:

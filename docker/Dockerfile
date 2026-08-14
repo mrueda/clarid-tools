@@ -29,7 +29,7 @@ WORKDIR /usr/share/clarid-tools
 COPY . .
 ENV PATH="/opt/clarid-venv/bin:/usr/share/clarid-tools/bin:${PATH}"
 
-RUN cpanm --notest --installdeps .
+RUN cpanm --configure-timeout 300 --notest --installdeps .
 
 # Install Python modules (utils)
 RUN python3 -m venv /opt/clarid-venv \
