@@ -84,20 +84,6 @@ We offer two modes of installation:
 
 ---
 
-## 📚 Documentation Development
-
-The documentation site is built with Docusaurus under `docs-site/`.
-
-```bash
-cd docs-site
-npm install
-npm run build
-```
-
-Some Docusaurus pages are generated from repository README files; see `docs-site/README.md` before editing copied installation or preprocessing pages.
-
----
-
 ## 🧠 Citation
 
 If you use **ClarID-Tools** in your work, please cite:
