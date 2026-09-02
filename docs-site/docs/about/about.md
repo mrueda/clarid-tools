@@ -28,23 +28,11 @@ the reference command-line implementation of the ClarID identifier approach.
   </article>
 </div>
 
-In short: the paper defines the concept; this repository shows how to run it.
-
 ## Relationship to the Paper
 
-<div class="claridAboutCallout">
-  <p>
-    The paper describes the motivation, identifier design, and intended use in
-    biomedical metadata integration. This documentation describes the operational
-    implementation for the current software release.
-  </p>
-</div>
-
-This includes the exact CLI behavior, the codebook configuration model,
-practical encode/decode workflows, reproducible examples, and QR-code
-generation.
-
-If wording in the paper and implementation documentation ever diverge, the paper should be treated as the conceptual description and this documentation as the operational guide for the current software release.
+The paper describes the motivation, identifier design, and intended use. This
+documentation describes the CLI, codebook model, and behavior of the current
+ClarID-Tools release.
 
 ## Development
 

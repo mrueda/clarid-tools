@@ -1,16 +1,7 @@
 # Use from R
 
-Many ClarID workflows start as metadata tables. If those tables live in R, you
-can keep the familiar R data-frame workflow while still using the reference
-ClarID-Tools command-line implementation.
-
-The pattern is intentionally simple: write a CSV from R, run the same
-`clarid-tools` command you would run in a terminal, and read the encoded or
-decoded CSV back into R. No R package or Perl-to-R bridge is required.
-
-This is useful when R, R Markdown, Quarto, or an R-based pipeline prepares the
-metadata table but ClarID-Tools should remain the source of truth for encoding
-and decoding.
+Call `clarid-tools` from R with `system2()`: write the input table to CSV, run
+the CLI, and read the output CSV. No R package or Perl-to-R bridge is required.
 
 ## Before you start
 

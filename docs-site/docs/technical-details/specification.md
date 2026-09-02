@@ -50,7 +50,9 @@ Base62 is used here as a compact encoding alphabet, not as a semantic abbreviati
 
 > Note (`species` width): species stub width is defined by the codebook and should be consistent within a given codebook. The reference codebook uses width 2.
 
-> Note (`condition` mapping): the numeric mapping used for stub `condition` values depends on the packaged ICD-10 order map distributed with the reference implementation. In practice, condition stubs should be interpreted together with the ClarID-Tools release and associated resources used for encoding. Future revisions may revisit this mapping strategy if broader interoperability needs emerge.
+> Note (`condition` mapping): the numeric mapping used for stub `condition`
+> values depends on the packaged ICD-10 order map. Decode condition stubs with
+> the same ClarID-Tools release and mapping resources used for encoding.
 
 ---
 

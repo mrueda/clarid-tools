@@ -53,15 +53,16 @@ In short, the paper defines the identifier model, while ClarID-Tools implements 
 
 This architecture describes the reference CLI implementation used to encode, decode, validate, and generate QR codes for ClarID identifiers.
 
-- **Language & framework:** Perl 5, `Moo` and `MooX::Options`. Perl was chosen for efficiency in handling structured text files and for simplicity in a reference CLI implementation.  
+- **Language and framework:** Perl 5, `Moo`, and `MooX::Options`. Perl was chosen
+  for its efficiency in handling structured text files and its simplicity for a
+  reference implementation.
 - **Parsing / validation:** `YAML::XS`, `Text::CSV_XS`, `JSON::Validator` (codebook validated by JSON Schema).  
 - **QR codes:** `qrencode` (Linux).  
 - **Config:** YAML codebook (controlled vocabulary + optional aliases).
 
-The implementation is modular and intentionally straightforward, with a test suite that helps keep behavior reproducible. Equivalent implementations in other programming languages can preserve interoperability by following the same structural rules and YAML-based configuration model.
-
 :::note[Reimplementation in other languages]
-ClarID-Tools is designed so that equivalent implementations in other programming languages can preserve interoperability by following the same identifier rules and YAML-based configuration model.
+Implementations in other languages should follow the field order, encoding rules,
+and codebook semantics defined in the specification.
 
 If you are planning a reimplementation or language binding, please use the [repository issues page](https://github.com/CNAG-Biomedical-Informatics/clarid-tools/issues).
 
@@ -108,7 +109,10 @@ Stub fields are compact encodings of the same metadata, not visual abbreviations
 - Stub form: condition codes concatenated (no separator); decoding uses reverse mapping.
 
 :::warning[Condition ordering and versioning]
-Stub `condition` values depend on the ICD-10 ordering distributed with the reference implementation. In practice, encoded values should be interpreted together with the ClarID-Tools release and associated resources used for encoding. Keep the codebook and packaged mapping files under version control. Future revisions may revisit this mapping strategy if broader interoperability needs emerge.
+Stub `condition` values depend on the ICD-10 ordering distributed with the
+reference implementation. Decode them with the same ClarID-Tools release and
+mapping resources used for encoding. Keep the codebook and packaged mapping
+files under version control.
 
 :::
 <details>
@@ -196,10 +200,14 @@ def encode_base62(num: int) -> str:
 
 ---
 
-## Extensibility & pragmatic workarounds
+## Local adaptations
 
-- Targets `subject` and `biosample` entities; extensible to cohorts, datasets, experiments with minor code changes.  
-- Temporary workaround: repurpose unused codebook fields (e.g., use `tissue` for geographic location). This keeps identifiers functional if overall structure is preserved.
+ClarID-Tools currently supports `subject` and `biosample`. Adding another entity
+type, such as `cohort`, `dataset`, or `experiment`, requires code changes. When
+code changes are not feasible, projects may repurpose an unused field while
+retaining the existing identifier structure, for example by using `tissue` for
+geographic location. Such use is project-specific, changes the field's documented
+meaning, and should be recorded in the project codebook.
 
 ---
 

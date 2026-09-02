@@ -39,7 +39,8 @@ The maximum is set with the parameter `--max_conditions`, which defaults to **10
 
 No. In the current reference implementation, stub `condition` values are derived from the packaged ICD-10 order map distributed with ClarID-Tools.
 
-In practice, encoded values should be interpreted together with the ClarID-Tools release and associated resources used for encoding. Future revisions may revisit this mapping strategy if broader interoperability needs emerge.
+Decode condition stubs with the same ClarID-Tools release and mapping resources
+used for encoding.
 
 </details>
 <details>
